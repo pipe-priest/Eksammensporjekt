@@ -12,5 +12,12 @@ h1 {
     text-align: center;
     margin: 24px 0;
 }
+map  { 
+    width:600px;
+    height:400px;
+    background-image:url("2.sal%20hcøl.png");
+    background-size:cover; 
+
+}
 
 /* Add more styles here */
