@@ -3,54 +3,127 @@ let korridorLokation = [[1, 1, 0], [2, 1, 0]];//(start(x,y,z), slut(x,y,z))
 let korridorArray = [[1, korridorLokation, " nord 0.sal"], [2, korridorLokation, "syd 0.sal"]];//(korridorId, korridorLokation, navn)
 
 
-let dørLokation1 = [1, 2, 0];//(x,y,z)
-let dørLokation2 = [2, 2, 0];//(x,y,z)
-let dørArray = [[1, dørLokation1, 1], [1, dørLokation2, 2]];//(dørid,dørLokation, lokaleTilknyttet 
+// Udvidet datastruktur for lokaler og døre
+let lokaleArray = [
+    [1, "Lokale 001", "undervisningslokale"],
+    [2, "Lokale 002", "undervisningslokale"],
+    [3, "Korridor Nord", "korridor"],
+    [4, "Korridor Syd", "korridor"]
+];
+
+// Udvidet dørArray: [dørId, dørLokation, fraLokale, tilLokale, dørType]
+let dørArray = [
+    [1, [1, 2, 0], 1, 3, "lokaleTilKorridor"], // Fra lokale 001 til korridor nord
+    [2, [2, 2, 0], 2, 4, "lokaleTilKorridor"], // Fra lokale 002 til korridor syd
+    [3, [1, 1, 0], 1, 2, "lokaleTilLokale"]   // Fra lokale 001 til lokale 002
+];
 let userDøre = [1, 2] //(dørId1, dørId2);
 
-function afstandsBeregnerFugl(startLokation, slutLokation) {
-    let afstand = sqrt((startLokation[0] - slutLokation[0]) ** 2 + (startLokation[1] - slutLokation[1]) ** 2 + (startLokation[2] - slutLokation[2]) ** 2,)
-    return afstand
-}
-function kompasX(ændringX) {
-    if (ændringX > 0) {
-        return "nord"
-    } else if (ændringX < 0) {
-        return "syd"
-    } else {
-        return "ingen ændring"
+// OBS: afstands beregner ikke opdatere til at passe med nyt dataformat. ikke slettet da kan være brugbar på et andet tidspunkt
+// function afstandsBeregnerFugl(startLokation, slutLokation) {
+//     let afstand = Math.sqrt((startLokation[0] - slutLokation[0]) ** 2 + (startLokation[1] - slutLokation[1]) ** 2 + (startLokation[2] - slutLokation[2]) ** 2);
+//     return afstand;
+// }
+export default function BFSAlgoritmeSammeSal(korridorArray, userDøre) {// husk at ændre når vi begynder at arbejde med flere sale.
+    //det er kinda fucked at lave flere funkioner inde i en og bryder sikkert nogen relger og konventioner. pas på at det ikke bliver scopeblocket?
 
-    }
-
-}
-
-function punktIndenforLinjeX(punkt, linje) {
-    if (punkt[0] >= linje[0][0]) {//Fortids William her: jeg tror det at sammenligne 2d og 1d arrays er ulovligt men idk, hvis det ikke fungere så er det nok derfor.
-        if (punkt[0] <= linje[1][0]) {
-            return true
+    function kompasX(ændringX) {
+        if (ændringX > 0) {
+            return "nord"
+        } else if (ændringX < 0) {
+            return "syd"
+        } else {
+            return "ingen ændring"
         }
-    } else {
-        return false
     }
-}
+    function findDør(dørId) {
+        return dørArray.find(dør => dør[0] === dørId);
+    }
 
-export default function SildebensAlgoritmeSammeSal(korridorArray, userDøre) {// husk at ændre når vi begynder at arbejde med flere sale
-    if (userDøre[0][0] == userDøre[1][0]) { //tjekker om dørende er over for hinanden. Kan nok ændres til at tolere en store forskel alla 2-3m
-        return "gå over på den anden side af gangen"
-    } else {
-        for (let i = 0; i < korridorArray.lenght; i++) {//tjekker om der er en korridor der dækker over forskellen i x
-            if (punktIndenforLinjeX(korridorArray[i], userDøre[0][0])) {
-                if (punktIndenforLinjeX(korridorArray[i], userDøre[1][0])) {
-                    return "brug korridor" + korridorArray[i] + "mod" + kompasX(userDøre[0][0] - userDøre[1][0])
+    function findLokale(lokaleId) {
+        return lokaleArray.find(lokale => lokale[0] === lokaleId);
+    }
+
+    function getDøreFraLokale(lokaleId) {
+        return dørArray.filter(dør => dør[2] === lokaleId || dør[3] === lokaleId);
+    }
+
+    function erKorridor(lokaleId) {
+        const lokale = findLokale(lokaleId);
+        return lokale && lokale[2] === "korridor";
+    }
+
+    // BFS algoritme til at finde vej gennem lokaler
+    function findVejGennemLokaler(startLokaleId, målLokaleId) {
+        if (startLokaleId === målLokaleId) {
+            return { sti: [startLokaleId], døre: [] };
+        }
+
+        const queue = [{ lokaleId: startLokaleId, sti: [startLokaleId], døre: [] }];
+        const besøgt = new Set([startLokaleId]);
+
+        while (queue.length > 0) {
+            const { lokaleId, sti, døre } = queue.shift();
+
+            // Find alle døre fra dette lokale
+            const døreFraLokale = getDøreFraLokale(lokaleId);
+
+            for (const dør of døreFraLokale) {
+                const næsteLokaleId = dør[2] === lokaleId ? dør[3] : dør[2];
+
+                if (!besøgt.has(næsteLokaleId)) {
+                    const nySti = [...sti, næsteLokaleId];
+                    const nyDøre = [...døre, dør[0]];
+
+                    if (næsteLokaleId === målLokaleId) {
+                        return { sti: nySti, døre: nyDøre };
+                    }
+
+                    besøgt.add(næsteLokaleId);
+                    queue.push({ lokaleId: næsteLokaleId, sti: nySti, døre: nyDøre });
                 }
-            } else {
-
-                return console.error("sildebens algoritme 2. if-else fuckup"); //kommer nok til at spamme meget grundet den er indnen i for-loopet
             }
         }
+
+        return null; // Ingen vej fundet
     }
 
+    function genererInstruktioner(sti, døre) {
+        if (sti.length < 2) {
+            return "Du er allerede i mållokalet";
+        }
 
+        let instruktioner = [];
+        for (let i = 0; i < sti.length - 1; i++) {
+            const fraLokale = findLokale(sti[i]);
+            const tilLokale = findLokale(sti[i + 1]);
+            const dør = findDør(døre[i]);
+
+            instruktioner.push(`Gå gennem dør ${dør[0]} fra ${fraLokale[1]} til ${tilLokale[1]}`);
+        }
+
+        return instruktioner.join(". ") + ".";
+    }
+
+   
+
+    let dør1 = findDør(userDøre[0]);
+    let dør2 = findDør(userDøre[1]);
+
+    if (!dør1 || !dør2) {
+        return "Fejl: En eller begge døre findes ikke";
+    }
+
+    const startLokaleId = dør1[2]; // Lokalet hvor dør1 er
+    const målLokaleId = dør2[2];   // Lokalet hvor dør2 er
+
+    // Find vej fra startlokale til mållokale
+    const vejResultat = findVejGennemLokaler(startLokaleId, målLokaleId);
+
+    if (!vejResultat) {
+        return "Fejl: Ingen vej fundet mellem lokalerne";
+    }
+
+    // Generer instruktioner baseret på stien
+    return genererInstruktioner(vejResultat.sti, vejResultat.døre);
 }
-
-
