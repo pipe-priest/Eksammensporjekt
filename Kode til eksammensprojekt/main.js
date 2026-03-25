@@ -1,11 +1,21 @@
-const startInput = document.getElementById("start"); // Hent input-elementet
-const startnr = startInput.value;           // Det er en streng
-const start = parseFloat(startnr);          // Konverter til et nummer
+function findVej(){
+    const startInput = document.getElementById("start"); // Hent input-elementet
+    const startnr = startInput.value;           // Det er en streng
+    const start = parseFloat(startnr);          // Konverter til et nummer
 
-const slutInput = document.getElementById("slut"); // Hent input-elementet
-const slutnr = slutInput.value;           // Det er en streng
-const slut = parseFloat(slutnr);          // Konverter til et nummer
+    const slutInput = document.getElementById("slut"); // Hent input-elementet
+    const slutnr = slutInput.value;           // Det er en streng
+    const slut = parseFloat(slutnr);          // Konverter til et nummer
 
+    console.log("Start:", start, "Slut:", slut);
+
+    if (Number.isNaN(start) || Number.isNaN(slut)) {
+        console.warn("Begge felter skal være gyldige numre");
+        return;
+    }
+
+    // Her kan der kaldes flere funktioner til at beregne rute (f.eks. beregnRute)
+}
 /* følgende linjer er punkter til lokaler på skolen, tænler at det skal laves om til et objekt, så man kan referere til lokale nr. og få et kordinatsæt at arbeje med.
 aula = (0.11, 17.47)
 kantine = (0.34, 32.84)
