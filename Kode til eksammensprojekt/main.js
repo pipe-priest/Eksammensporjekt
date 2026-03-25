@@ -43,7 +43,8 @@ const locations = {
 
 // Nummer-til-lokale mapping (nem at udvide)
 // Her bruger vi nøgler som tal fra input til at slå den 'stue_XXX' nøgle op.
-const numberToLocationKey = {
+// Kaldes lokaleId i algoritme.js
+const numberTilLokation = {
   1: "stue_001",
   2: "stue_002",
   3: "stue_003",
@@ -98,10 +99,6 @@ function findVej() {
     console.warn("Start- eller slutnummer findes ikke.");
     return;
   }
-
-//indsæt djikstra algoritme her.
-
-
 
   // Find 
   const startLokale = locations[startnøgle]; //de faktiske koordinater til startlokationen findes ved at bruge "startnøglen"
