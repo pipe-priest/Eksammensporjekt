@@ -1,3 +1,5 @@
+import dijkstraAlgoritmeSammeSal from "./algoritme";
+
 const locations = {
   aula: { x: 0.11, y: 17.47 },
   kantine: { x: 0.34, y: 32.84 },
@@ -41,6 +43,7 @@ const locations = {
 
 // Nummer-til-lokale mapping (nem at udvide)
 // Her bruger vi nøgler som tal fra input til at slå den 'stue_XXX' nøgle op.
+// Kaldes lokaleId i algoritme.js
 const numberToLocationKey = {
   1: "stue_001",
   2: "stue_002",
@@ -97,6 +100,10 @@ function findVej() {
     console.warn("Start- eller slutnummer findes ikke i kortet.");
     return;
   }
+
+//indsæt djikstra algoritme her.
+
+
 
   // Find de faktiske koordinater ud fra lokalenøglen
   const startLokale = locations[startKey];
