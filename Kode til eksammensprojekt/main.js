@@ -41,7 +41,7 @@ const locations = {
 
 // Nummer-til-lokale mapping (nem at udvide)
 // Her bruger vi nøgler som tal fra input til at slå den 'stue_XXX' nøgle op.
-const numberToLocationKey = {
+const numberTilLokation = {
   1: "stue_001",
   2: "stue_002",
   3: "stue_003",
@@ -75,36 +75,35 @@ const numberToLocationKey = {
 };
 
 function findVej() {
-  // Læs værdier fra inputfelterne (brugeren skriver tal)
-  const startVerdi = document.getElementById("start").value.trim();
-  const slutVerdi = document.getElementById("slut").value.trim();
+
+  const startVerdi = document.getElementById("start").value.trim();// afæser værdi fra start inputfeltet i index.html filen
+  const slutVerdi = document.getElementById("slut").value.trim();// afæser værdi fra slut inputfeltet i index.html filen
 
   const startNr = Number(startVerdi);// Konvertere til tal typen så nummeret kan bruges til finde navnet til lokalets placering i det øverste array
   const slutNr = Number(slutVerdi);// Konvertere til tal typen så nummeret kan bruges til finde navnet til lokalets placering i det øverste array
 
-  // Simpel validering: forsikre os om gyldige tal og ikke tomme strenge
+  // Simpel validering: sikre at tallene er gyldige og ikke tomme strenge, hvis ikke alt er i orden sendes en fejlmeddelelse i konsollen
   if (Number.isNaN(startNr) || Number.isNaN(slutNr) || startVerdi === "" || slutVerdi === "") {
     console.warn("Indtast gyldige start- og slutnumre, f.eks. 1 eller 10");
     return;
   }
 
-  // Slå stue-nøglen op via nummer-til-lokale mapping
-  const startKey = numberToLocationKey[startNr];
-  const slutKey = numberToLocationKey[slutNr];
+  const startnøgle = numberTilLokation[startNr]; // bruger start input nummeret til at finde "nøglen" der passer til lokalet
+  const slutnøgle = numberTilLokation[slutNr]; // bruger slut input nummeret til at finde "nøglen" der passer til lokalet
 
-  // Kontrollér at numrene findes i vores kortdata
-  if (!startKey || !slutKey) {
-    console.warn("Start- eller slutnummer findes ikke i kortet.");
+  // Kontrollere at numrene findes
+  if (!startnøgle || !slutnøgle) {
+    console.warn("Start- eller slutnummer findes ikke.");
     return;
   }
 
-  // Find de faktiske koordinater ud fra lokalenøglen
-  const startLokale = locations[startKey];
-  const slutLokale = locations[slutKey];
+  // Find 
+  const startLokale = locations[startnøgle]; //de faktiske koordinater til startlokationen findes ved at bruge "startnøglen"
+  const slutLokale = locations[slutnøgle]; //de faktiske koordinater til slutlokationen findes ved at bruge "slutnøglen"
 
-  // Log hvad vi har fundet, så det kan ses i konsollen
-  console.log("Start:", startNr, "->", startKey, startLokale);
-  console.log("Slut:", slutNr, "->", slutKey, slutLokale);
+  // der skrives ud i console.log:hvad vi har fundet frem til, så det kan ses i konsollen
+  console.log("Start:", startNr, "->", startnøgle, startLokale);
+  console.log("Slut:", slutNr, "->", slutnøgle, slutLokale);
 
   // Her kan du tilføje mere avanceret rute-beregning. Lige nu regner vi luftlinje afstand.
   const dx = slutLokale.x - startLokale.x;
