@@ -1,4 +1,4 @@
-import dijkstraAlgoritmeSammeSal from "./algoritme";
+import dijkstraAlgoritmeSammeSal from "./algoritme.js";
 
 const lokationer = {
   aula: { x: 0.11, y: 17.47 },
@@ -121,3 +121,6 @@ function findVej() {
   console.log("Start:", startNr, "->", startnøgle, startLokale);
   console.log("Slut:", slutNr, "->", slutnøgle, slutLokale);
 }
+
+// Gør funktionen tilgængelig globalt for onclick i index.html
+window.findVej = findVej;
