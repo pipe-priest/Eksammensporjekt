@@ -41,8 +41,8 @@ const lokationer = {
   stue_027b: { x: -11.85, y: 32.93 }
 };
 
-// Nummer-til-lokale mapping (nem at udvide)
-// Her bruger vi nøgler som tal fra input til at slå den 'stue_XXX' nøgle op.
+// Nummer-til-lokale mapping
+// Her bruger vi nøgler som tal fra input til at slå 'stue_XXX' nøgle op.
 // Kaldes lokaleId i algoritme.js
 const numberTilLokation = {
   1: "stue_001",
