@@ -1,4 +1,5 @@
-const locations = {
+const Lokationer = {
+  gang: { x: 0, y: 0 },
   aula: { x: 0.11, y: 17.47 },
   kantine: { x: 0.34, y: 32.84 },
   stue_001: { x: -48, y: 24 },
@@ -74,6 +75,19 @@ const numberTilLokation = {
   79: "stue_079"
 };
 
+
+
+const døre = [
+  ["dør_001", { x: -40, y: 24 }, "stue_001", "stue_002"],
+  ["dør_002", { x: -30, y: 12 }, "stue_002", "stue_003"],
+  ["dør_003", { x: -38, y: 12 }, "stue_002", "stue_004"],
+  ["dør_004", { x: -13, y: 10 }, "stue_002", "stue_005"],
+  ["dør_005", { x: -57, y: 35 }, "stue_001", "stue_006"],
+  ["dør_006", { x: -28, y: 32 }, "stue_001", "stue_009"],
+  ["dør_007", { x: -20, y: 32 }, "stue_001", "stue_010"],
+  ["dør_008", { x: -18, y: 27 }, "stue_002", "stue_012"],
+];
+
 function findVej() {
 
   const startVerdi = document.getElementById("start").value.trim();// afæser værdi fra start inputfeltet i index.html filen
@@ -98,16 +112,10 @@ function findVej() {
   }
 
   // Find 
-  const startLokale = locations[startnøgle]; //de faktiske koordinater til startlokationen findes ved at bruge "startnøglen"
-  const slutLokale = locations[slutnøgle]; //de faktiske koordinater til slutlokationen findes ved at bruge "slutnøglen"
+  const startLokale = Lokationer[startnøgle]; //de faktiske koordinater til startlokationen findes ved at bruge "startnøglen"
+  const slutLokale = Lokationer[slutnøgle]; //de faktiske koordinater til slutlokationen findes ved at bruge "slutnøglen"
 
   // der skrives ud i console.log:hvad vi har fundet frem til, så det kan ses i konsollen
   console.log("Start:", startNr, "->", startnøgle, startLokale);
   console.log("Slut:", slutNr, "->", slutnøgle, slutLokale);
-
-  // Her kan du tilføje mere avanceret rute-beregning. Lige nu regner vi luftlinje afstand.
-  const dx = slutLokale.x - startLokale.x;
-  const dy = slutLokale.y - startLokale.y;
-  const afstand = Math.sqrt(dx * dx + dy * dy);
-  console.log("Luftlinje afstand:", afstand.toFixed(2));
 }
