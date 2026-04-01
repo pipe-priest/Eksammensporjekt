@@ -1,5 +1,6 @@
-const Lokationer = {
-  gang: { x: 0, y: 0 },
+import dijkstraAlgoritmeSammeSal from "./algoritme";
+
+const locations = {
   aula: { x: 0.11, y: 17.47 },
   kantine: { x: 0.34, y: 32.84 },
   stue_001: { x: -48, y: 24 },
@@ -42,6 +43,7 @@ const Lokationer = {
 
 // Nummer-til-lokale mapping (nem at udvide)
 // Her bruger vi nøgler som tal fra input til at slå den 'stue_XXX' nøgle op.
+// Kaldes lokaleId i algoritme.js
 const numberTilLokation = {
   1: "stue_001",
   2: "stue_002",
