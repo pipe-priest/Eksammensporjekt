@@ -1,6 +1,6 @@
 import dijkstraAlgoritmeSammeSal from "./algoritme";
 
-const locations = {
+const lokationer = {
   aula: { x: 0.11, y: 17.47 },
   kantine: { x: 0.34, y: 32.84 },
   stue_001: { x: -48, y: 24 },
@@ -114,8 +114,8 @@ function findVej() {
   }
 
   // Find 
-  const startLokale = Lokationer[startnøgle]; //de faktiske koordinater til startlokationen findes ved at bruge "startnøglen"
-  const slutLokale = Lokationer[slutnøgle]; //de faktiske koordinater til slutlokationen findes ved at bruge "slutnøglen"
+  const startLokale = lokationer[startnøgle]; //de faktiske koordinater til startlokationen findes ved at bruge "startnøglen"
+  const slutLokale = lokationer[slutnøgle]; //de faktiske koordinater til slutlokationen findes ved at bruge "slutnøglen"
 
   // der skrives ud i console.log:hvad vi har fundet frem til, så det kan ses i konsollen
   console.log("Start:", startNr, "->", startnøgle, startLokale);
