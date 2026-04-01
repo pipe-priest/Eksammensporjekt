@@ -1,6 +1,5 @@
 
 let korridorLokation = [[1, 1, 0], [2, 1, 0]];//(start(x,y,z), slut(x,y,z))
-let korridorArray = [[1, korridorLokation, " nord 0.sal"], [2, korridorLokation, "syd 0.sal"]];//(korridorId, korridorLokation, navn)
 
 
 // Udvidet datastruktur for lokaler og døre
@@ -11,7 +10,7 @@ let lokaleArray = [
     [4, "Korridor Syd", "korridor"]
 ];
 
-// Udvidet dørArray: [dørId, dørLokation, fraLokale, tilLokale, dørType]
+// Udvidet dørArray: [dørId, [dørLokation], fraLokale, tilLokale, dørType]
 let dørArray = [
     [1, [1, 2, 0], 1, 3, "lokaleTilKorridor"], // Fra lokale 001 til korridor nord
     [2, [2, 2, 0], 2, 4, "lokaleTilKorridor"], // Fra lokale 002 til korridor syd
