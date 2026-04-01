@@ -24,7 +24,7 @@ let userDøre = [1, 2] //(dørId1, dørId2);
 //     return afstand;
 // }
 
-export default function dijkstraAlgoritmeSammeSal(lokaleArray, dørArray, userDøre) {// husk at ændre når vi begynder at arbejde med flere sale.
+export default function dijkstraAlgoritmeSammeEtage(lokaleArray, dørArray, startLokaleId, målLokaleId) {
 
     function findDør(dørId) {
         return dørArray.find(dør => dør[0] === dørId);
@@ -53,9 +53,9 @@ export default function dijkstraAlgoritmeSammeSal(lokaleArray, dørArray, userD�
     }
 
     // Dijkstra's algoritme til at finde korteste vej gennem lokaler
-    function findVejGennemLokaler(startLokaleId, målLokaleId) {
-        if (startLokaleId === målLokaleId) {
-            return { sti: [startLokaleId], døre: [] };
+    function findVejGennemLokaler(startId, målId) {
+        if (startId === målId) {
+            return { sti: [startId], døre: [] };
         }
 
         const afstande = {};
@@ -71,10 +71,9 @@ export default function dijkstraAlgoritmeSammeSal(lokaleArray, dørArray, userD�
             ubesøgt.add(lokale[0]);
         });
 
-        afstande[startLokaleId] = 0;
+        afstande[startId] = 0;
 
         while (ubesøgt.size > 0) {
-            // Find ubesøgt node med mindste afstand
             let nuværendeLokaleId = null;
             let minAfstand = Infinity;
 
@@ -91,11 +90,10 @@ export default function dijkstraAlgoritmeSammeSal(lokaleArray, dørArray, userD�
 
             ubesøgt.delete(nuværendeLokaleId);
 
-            if (nuværendeLokaleId === målLokaleId) {
-                // Genopbyg stien
+            if (nuværendeLokaleId === målId) {
                 let sti = [];
                 let døre = [];
-                let currentId = målLokaleId;
+                let currentId = målId;
 
                 while (currentId !== null) {
                     sti.unshift(currentId);
@@ -105,30 +103,29 @@ export default function dijkstraAlgoritmeSammeSal(lokaleArray, dørArray, userD�
                     currentId = tidligere[currentId];
                 }
 
-                return { sti: sti, døre: døre };
+                return { sti, døre };
             }
 
-            // Find alle døre fra nuværende lokale
             const døreFraLokale = getDøreFraLokale(nuværendeLokaleId);
 
             for (const dør of døreFraLokale) {
                 const næsteLokaleId = dør[2] === nuværendeLokaleId ? dør[3] : dør[2];
 
-                if (ubesøgt.has(næsteLokaleId)) {
-                    // Beregn afstand via denne dør
-                    const fraLokale = findLokale(nuværendeLokaleId);
-                    const tilLokale = findLokale(næsteLokaleId);
-                    // Antag at lokaleArray har lokation som [x, y, z] på indeks 3, ellers tilføj lokation til lokaleArray
-                    const fraLokation = fraLokale[3] || dør[1];
-                    const tilLokation = tilLokale[3] || dør[1];
-                    const dørAfstand = beregnAfstand(fraLokation, tilLokation);
-                    const nyAfstand = afstande[nuværendeLokaleId] + dørAfstand;
+                if (!ubesøgt.has(næsteLokaleId)) {
+                    continue;
+                }
 
-                    if (nyAfstand < afstande[næsteLokaleId]) {
-                        afstande[næsteLokaleId] = nyAfstand;
-                        tidligere[næsteLokaleId] = nuværendeLokaleId;
-                        tidligere_dør[næsteLokaleId] = dør[0];
-                    }
+                const fraLokale = findLokale(nuværendeLokaleId);
+                const tilLokale = findLokale(næsteLokaleId);
+                const fraLokation = fraLokale[3] || dør[1];
+                const tilLokation = tilLokale[3] || dør[1];
+                const dørAfstand = beregnAfstand(fraLokation, tilLokation);
+                const nyAfstand = afstande[nuværendeLokaleId] + dørAfstand;
+
+                if (nyAfstand < afstande[næsteLokaleId]) {
+                    afstande[næsteLokaleId] = nyAfstand;
+                    tidligere[næsteLokaleId] = nuværendeLokaleId;
+                    tidligere_dør[næsteLokaleId] = dør[0];
                 }
             }
         }
@@ -153,25 +150,15 @@ export default function dijkstraAlgoritmeSammeSal(lokaleArray, dørArray, userD�
         return instruktioner.join(". ") + ".";
     }
 
-
-
-    let dør1 = findDør(userDøre[0]);
-    let dør2 = findDør(userDøre[1]);
-
-    if (!dør1 || !dør2) {
-        return "Fejl: En eller begge døre findes ikke";
+    if (startLokaleId == null || målLokaleId == null) {
+        return "Fejl: start eller mål lokation er ikke angivet";
     }
 
-    const startLokaleId = dør1[1]; // Lokalet hvor dør1 er (anden plads i arrayet er kordinater)
-    const målLokaleId = dør2[1];   // Lokalet hvor dør2 er (anden plads i arrayet er kordinater)
-
-    // Find vej fra startlokale til mållokale
     const vejResultat = findVejGennemLokaler(startLokaleId, målLokaleId);
 
     if (!vejResultat) {
         return "Fejl: Ingen vej fundet mellem lokalerne";
     }
 
-    // Generer instruktioner baseret på stien
     return genererInstruktioner(vejResultat.sti, vejResultat.døre);
 }

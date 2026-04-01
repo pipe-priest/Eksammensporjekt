@@ -1,50 +1,57 @@
-import dijkstraAlgoritmeSammeSal from "./algoritme.js";
+import dijkstraAlgoritmeSammeEtage from "./algoritme.js";
 
-const lokationer = {
-  aula: { x: 0.11, y: 17.47 },
-  kantine: { x: 0.34, y: 32.84 },
-  stue_001: { x: -48, y: 24 },
-  stue_002: { x: -22.85, y: 10.37 },
-  stue_003: { x: -30.1, y: 12.86 },
-  stue_004: { x: -38.19, y: 12.33 },
-  stue_005: { x: -13.11, y: 10.08 },
-  stue_006: { x: -57.55, y: 35 },
-  stue_009: { x: -28, y: 32 },
-  stue_010: { x: -20, y: 32 },
-  stue_012: { x: -18.12, y: 27.13 },
-  stue_026: { x: -27, y: 21.56 },
-  stue_028: { x: 8.13, y: 16.58 },
-  stue_029: { x: 14.09, y: 35.43 },
-  stue_030: { x: 18.88, y: 35.26 },
-  stue_033: { x: 9.81, y: 32.79 },
-  stue_034: { x: 10.23, y: 28.63 },
-  stue_036: { x: 14.13, y: 28.5 },
-  stue_037: { x: 31.91, y: 32.43 },
-  stue_038: { x: 47.59, y: 33.7 },
-  stue_041: { x: 22, y: 6 },
-  stue_045: { x: 27.87, y: 6.25 },
-  stue_049: { x: 22.61, y: 22.96 },
-  stue_050: { x: 22.7, y: 21.03 },
-  stue_068: { x: 26.64, y: 17.21 },
-  stue_070: { x: 36, y: 19.58 },
-  stue_072: { x: 54.38, y: 24.31 },
-  stue_073: { x: 53.18, y: 19.23 },
-  stue_074: { x: 47.89, y: 10.88 },
-  stue_076: { x: 55.6, y: 14.28 },
-  stue_077: { x: 41.01, y: 8.32 },
-  stue_079: { x: 46.58, y: 22.75 },
-  stue_003b: { x: -29.88, y: 8.69 },
-  stue_007a: { x: -40.03, y: 32.81 },
-  stue_007b: { x: -50.71, y: 34.7 },
-  stue_010a: { x: -20.35, y: 27.47 },
-  stue_027a: { x: -7.4, y: 32.89 },
-  stue_027b: { x: -11.85, y: 32.93 }
-};
+const lokaler = [
+  { id: "aula", x: 0.11, y: 17.47 },
+  { id: "kantine", x: 0.34, y: 32.84 },
+  { id: "stue_001", x: -48, y: 24 },
+  { id: "stue_002", x: -22.85, y: 10.37 },
+  { id: "stue_003", x: -30.1, y: 12.86 },
+  { id: "stue_004", x: -38.19, y: 12.33 },
+  { id: "stue_005", x: -13.11, y: 10.08 },
+  { id: "stue_006", x: -57.55, y: 35 },
+  { id: "stue_009", x: -28, y: 32 },
+  { id: "stue_010", x: -20, y: 32 },
+  { id: "stue_012", x: -18.12, y: 27.13 },
+  { id: "stue_026", x: -27, y: 21.56 },
+  { id: "stue_028", x: 8.13, y: 16.58 },
+  { id: "stue_029", x: 14.09, y: 35.43 },
+  { id: "stue_030", x: 18.88, y: 35.26 },
+  { id: "stue_033", x: 9.81, y: 32.79 },
+  { id: "stue_034", x: 10.23, y: 28.63 },
+  { id: "stue_036", x: 14.13, y: 28.5 },
+  { id: "stue_037", x: 31.91, y: 32.43 },
+  { id: "stue_038", x: 47.59, y: 33.7 },
+  { id: "stue_041", x: 22, y: 6 },
+  { id: "stue_045", x: 27.87, y: 6.25 },
+  { id: "stue_049", x: 22.61, y: 22.96 },
+  { id: "stue_050", x: 22.7, y: 21.03 },
+  { id: "stue_068", x: 26.64, y: 17.21 },
+  { id: "stue_070", x: 36, y: 19.58 },
+  { id: "stue_072", x: 54.38, y: 24.31 },
+  { id: "stue_073", x: 53.18, y: 19.23 },
+  { id: "stue_074", x: 47.89, y: 10.88 },
+  { id: "stue_076", x: 55.6, y: 14.28 },
+  { id: "stue_077", x: 41.01, y: 8.32 },
+  { id: "stue_079", x: 46.58, y: 22.75 },
+  { id: "stue_003b", x: -29.88, y: 8.69 },
+  { id: "stue_007a", x: -40.03, y: 32.81 },
+  { id: "stue_007b", x: -50.71, y: 34.7 },
+  { id: "stue_010a", x: -20.35, y: 27.47 },
+  { id: "stue_027a", x: -7.4, y: 32.89 },
+  { id: "stue_027b", x: -11.85, y: 32.93 }
+];
+
+
+function bygLokalePar(lokaler) {
+  return [lokaler.id, { x: lokaler.x, y: lokaler.y }];// Omdanner array af lokaler til et format der er nemmere at slå op i algoritmen, hvor id er nøglen og koordinaterne er værdien
+}
+const lokaleMap = Object.fromEntries(lokaler.map(bygLokalePar));// Opretter et map for hurtig opslag af lokaler baseret på id
+
 
 // Nummer-til-lokale mapping
 // Her bruger vi nøgler som tal fra input til at slå 'stue_XXX' nøgle op.
 // Kaldes lokaleId i algoritme.js
-const numberTilLokation = {
+const numberTilLokaler = {
   1: "stue_001",
   2: "stue_002",
   3: "stue_003",
@@ -90,6 +97,29 @@ const døre = [
   ["dør_008", { x: -18, y: 27 }, "stue_002", "stue_012"],
 ];
 
+const localeNavnTilId = Object.fromEntries(
+  Object.entries(numberTilLokaler).map(([nr, navn]) => [navn, Number(nr)])
+);
+
+const lokaleArray = Object.entries(numberTilLokaler).map(([nr, navn]) => {
+  const coords = lokaleMap[navn];
+  if (!coords) {
+    throw new Error(`Koordinater mangler for ${navn}`);
+  }
+  return [Number(nr), navn, "lokale", [coords.x, coords.y, 0]];
+});
+
+const dørArray = døre.map(([dørId, coords, fraNavn, tilNavn]) => {
+  const fraId = localeNavnTilId[fraNavn];
+  const tilId = localeNavnTilId[tilNavn];
+  if (!fraId || !tilId) {
+    throw new Error(`Dør ${dørId} forbinder ukendt lokale ${fraNavn} eller ${tilNavn}`);
+  }
+  return [dørId, [coords.x, coords.y, 0], fraId, tilId, "lokaleTilLokale"];
+});
+
+
+
 function findVej() {
 
   const startVerdi = document.getElementById("start").value.trim();// afæser værdi fra start inputfeltet i index.html filen
@@ -104,8 +134,8 @@ function findVej() {
     return;
   }
 
-  const startnøgle = numberTilLokation[startNr]; // bruger start input nummeret til at finde "nøglen" der passer til lokalet
-  const slutnøgle = numberTilLokation[slutNr]; // bruger slut input nummeret til at finde "nøglen" der passer til lokalet
+  const startnøgle = numberTilLokaler[startNr]; // bruger start input nummeret til at finde "nøglen" der passer til lokalet
+  const slutnøgle = numberTilLokaler[slutNr]; // bruger slut input nummeret til at finde "nøglen" der passer til lokalet
 
   // Kontrollere at numrene findes
   if (!startnøgle || !slutnøgle) {
@@ -113,13 +143,29 @@ function findVej() {
     return;
   }
 
-  // Find 
-  const startLokale = lokationer[startnøgle]; //de faktiske koordinater til startlokationen findes ved at bruge "startnøglen"
-  const slutLokale = lokationer[slutnøgle]; //de faktiske koordinater til slutlokationen findes ved at bruge "slutnøglen"
+  // Find koordinater via det nye array-format
+  const startLokale = lokaleMap[startnøgle];
+  const slutLokale = lokaleMap[slutnøgle];
 
-  // der skrives ud i console.log:hvad vi har fundet frem til, så det kan ses i konsollen
+  if (!startLokale || !slutLokale) {
+    console.warn("Kan ikke finde koordinater for start eller slut lokale.");
+    return;
+  }
+
   console.log("Start:", startNr, "->", startnøgle, startLokale);
   console.log("Slut:", slutNr, "->", slutnøgle, slutLokale);
+
+  // Hent lokaleId'er til Dijkstra fra nummer-til-navn mapping
+  const startLokaleId = Number(startNr);
+  const slutLokaleId = Number(slutNr);
+
+  const resultat = dijkstraAlgoritmeSammeEtage(lokaleArray, dørArray, startLokaleId, slutLokaleId);
+  console.log("Resultat:", resultat);
+
+  const outputElement = document.getElementById("vejResultat");
+  if (outputElement) {
+    outputElement.textContent = resultat;
+  }
 }
 
 // Gør funktionen tilgængelig globalt for onclick i index.html
