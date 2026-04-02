@@ -1,4 +1,4 @@
-import dijkstraAlgoritmeSammeEtage from "./algoritme.js";
+﻿import dijkstraAlgoritmeSammeEtage from "./algoritme.js";
 
 const lokaler = [
   { id: "aula", x: 0.11, y: 17.47 },
@@ -51,7 +51,7 @@ const lokaleMap = Object.fromEntries(lokaler.map(bygLokalePar));// Opretter et m
 // Nummer-til-lokale mapping
 // Her bruger vi nøgler som tal fra input til at slå 'stue_XXX' nøgle op.
 // Kaldes lokaleId i algoritme.js
-const numberTilLokaler = {
+const lokaleId = {
   1: "stue_001",
   2: "stue_002",
   3: "stue_003",
@@ -97,25 +97,32 @@ const døre = [
   ["dør_008", { x: -18, y: 27 }, "stue_002", "stue_012"],
 ];
 
-const localeNavnTilId = Object.fromEntries(
-  Object.entries(numberTilLokaler).map(([nr, navn]) => [navn, Number(nr)])
+function invertLokaleId([nr, navn]) { // input: [nummer, lokale_navn]
+  return [navn, Number(nr)]; // output: [lokale_navn, nummer_som_tal]
+}
+
+const localeNavnTilId = Object.fromEntries( // lav et objekt fra par-liste
+  Object.entries(lokaleId).map(invertLokaleId) // omdanner lokaleId til omvendt mapping
 );
 
-const lokaleArray = Object.entries(numberTilLokaler).map(([nr, navn]) => {
-  const coords = lokaleMap[navn];
-  if (!coords) {
-    throw new Error(`Koordinater mangler for ${navn}`);
+function lokaleEntryToArray([nr, navn]) { // input: [nummer, lokale_navn]
+  const coords = lokaleMap[navn]; // slå koordinater op fra localeMap
+  if (!coords) { // hvis lokalets koordinater ikke findes
+    throw new Error(`Koordinater mangler for ${navn}`); // fejl stop
   }
-  return [Number(nr), navn, "lokale", [coords.x, coords.y, 0]];
-});
+  return [Number(nr), navn, "lokale", [coords.x, coords.y, 0]]; // bygg array-objekt til dijkstra
+}
 
-const dørArray = døre.map(([dørId, coords, fraNavn, tilNavn]) => {
-  const fraId = localeNavnTilId[fraNavn];
-  const tilId = localeNavnTilId[tilNavn];
-  if (!fraId || !tilId) {
-    throw new Error(`Dør ${dørId} forbinder ukendt lokale ${fraNavn} eller ${tilNavn}`);
+const lokaleArray = Object.entries(lokaleId).map(lokaleEntryToArray); // konverter lokaleId til array-format
+
+
+const dørArray = døre.map(([dørId, coords, fra_LokaleId, til_LokaleId]) => { // input: [id for døren, dørens placering, første forbinelse til lokale, anden forbinelse til lokale]
+  const fraId = localeNavnTilId[fra_LokaleId]; // slå lokaleId op for 1. lokale
+  const tilId = localeNavnTilId[til_LokaleId]; // slå lokaleId op for 2. lokale
+  if (!fraId || !tilId) { // hvis en af lokalernes id'er ikke findes i mapping
+    throw new Error(`Dør ${dørId} forbinder ukendt lokale ${fra_LokaleId} eller ${til_LokaleId}`); // fejl stop med info om hvilken dør og hvilket lokale der er problemet
   }
-  return [dørId, [coords.x, coords.y, 0], fraId, tilId, "lokaleTilLokale"];
+  return [dørId, [coords.x, coords.y, 0], fraId, tilId, "lokaleTilLokale"];// bygg array-objekt til dijkstra
 });
 
 
@@ -128,14 +135,14 @@ function findVej() {
   const startNr = Number(startVerdi);// Konvertere til tal typen så nummeret kan bruges til finde navnet til lokalets placering i det øverste array
   const slutNr = Number(slutVerdi);// Konvertere til tal typen så nummeret kan bruges til finde navnet til lokalets placering i det øverste array
 
-  // Simpel validering: sikre at tallene er gyldige og ikke tomme strenge, hvis ikke alt er i orden sendes en fejlmeddelelse i konsollen
+  // validering: sikre at tallene er gyldige og ikke tomme strenge, hvis ikke alt er i orden sendes en fejlmeddelelse i konsollen
   if (Number.isNaN(startNr) || Number.isNaN(slutNr) || startVerdi === "" || slutVerdi === "") {
     console.warn("Indtast gyldige start- og slutnumre, f.eks. 1 eller 10");
     return;
   }
 
-  const startnøgle = numberTilLokaler[startNr]; // bruger start input nummeret til at finde "nøglen" der passer til lokalet
-  const slutnøgle = numberTilLokaler[slutNr]; // bruger slut input nummeret til at finde "nøglen" der passer til lokalet
+  const startnøgle = lokaleId[startNr]; // bruger start input nummeret til at finde "nøglen" der passer til lokalet
+  const slutnøgle = lokaleId[slutNr]; // bruger slut input nummeret til at finde "nøglen" der passer til lokalet
 
   // Kontrollere at numrene findes
   if (!startnøgle || !slutnøgle) {
@@ -147,11 +154,13 @@ function findVej() {
   const startLokale = lokaleMap[startnøgle];
   const slutLokale = lokaleMap[slutnøgle];
 
-  if (!startLokale || !slutLokale) {
-    console.warn("Kan ikke finde koordinater for start eller slut lokale.");
+// sender fejmeddelelse, hvis koordinaterne ikke findes
+  if (!startLokale || !slutLokale) { 
+    console.warn("Kan ikke finde koordinater for start eller slut lokale."); 
     return;
   }
 
+  // printer start og slut lokale, samt intastet numre i consollen
   console.log("Start:", startNr, "->", startnøgle, startLokale);
   console.log("Slut:", slutNr, "->", slutnøgle, slutLokale);
 
@@ -159,8 +168,8 @@ function findVej() {
   const startLokaleId = Number(startNr);
   const slutLokaleId = Number(slutNr);
 
-  const resultat = dijkstraAlgoritmeSammeEtage(lokaleArray, dørArray, startLokaleId, slutLokaleId);
-  console.log("Resultat:", resultat);
+  const resultat = dijkstraAlgoritmeSammeEtage(lokaleArray, dørArray, startLokaleId, slutLokaleId); // kørre dijkstra algoritmen
+  console.log("Resultat:", resultat); // printer dijkstra algoritmens resultat
 
   const outputElement = document.getElementById("vejResultat");
   if (outputElement) {
