@@ -144,7 +144,7 @@ export default function dijkstraAlgoritmeSammeEtage(lokaleArray, dørArray, star
             const tilLokale = findLokale(sti[i + 1]);
             const dør = findDør(døre[i]);
 
-            instruktioner.push(`Gå gennem dør ${dør[0]} fra ${fraLokale[1]} til ${tilLokale[1]}`);
+            instruktioner.push(`Gå gennem dør ${dør[0]} fra ${fraLokale[1]} til ${tilLokale[1]}\n`);
         }
 
         return instruktioner.join(". ") + ".";

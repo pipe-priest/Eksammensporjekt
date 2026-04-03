@@ -18,6 +18,7 @@ const lokaler = [
   { id: "gangareal_13", x: 47.43, y: 14.96 },
   { id: "gangareal_14", x: 49.77, y: 27.27 },
   { id: "gangareal_15", x: 51.06, y: 22.18 },
+  { id: "gangareal_16", x: 46.15, y: 20.27 },
   { id: "stue_001", x: -48, y: 24 },
   { id: "stue_002", x: -22.85, y: 10.37 },
   { id: "stue_003", x: -30.1, y: 12.86 },
@@ -150,12 +151,41 @@ const døre = [
   ["dør_034", { x: 5.5, y: 23.5 }, "gangareal_8", "stue_028"],
   ["dør_035", { x: 0, y: 16 }, "stue_028", "aula"],
   ["dør_036", { x: 20.55, y: 9.5 }, "stue_028", "stue_068"],
+  ["dør_037", { x: 11.8, y: 26.71 }, "stue_034", "gangareal_9"],
+  ["dør_038", { x: 10.67, y: 30.23 }, "stue_034", "stue_033"],
+  ["dør_039", { x: 14, y: 30 }, "stue_036", "stue_033"],
+  ["dør_040", { x: 14.43, y: 32.71 }, "stue_033", "stue_029"],
+  ["dør_041", { x: 17.74, y: 32.77 }, "stue_033", "stue_030"],
+  ["dør_042", { x: 16.08, y: 28.56 }, "gangareal_9", "stue_033"],
+  ["dør_043", { x: 19.51, y: 31.61 }, "stue_033", "stue_037"],
+  ["dør_044", { x: 20, y: 25.28 }, "gangareal_9", "gangareal_10"],
+  ["dør_045", { x: 34.08, y: 28.33 }, "gangareal_10", "stue_037"],
+  ["dør_046", { x: 30.21, y: 22.44 }, "gangareal_10", "stue_068"],
+  ["dør_047", { x: 32.55, y: 19 }, "stue_068", "stue_070"],
+  ["dør_048", { x: 38.8, y: 13.34 }, "stue_068", "gangareal_12"],
+  ["dør_049", { x: 42.04, y: 12.42 }, "gangareal_12", "stue_077"],
+  ["dør_050", { x: 42.17, y: 21.56 }, "gangareal_11", "gangareal_12"],
+  ["dør_051", { x: 47.05, y: 12.58 }, "gangareal_13", "stue_074"],
+  ["dør_052", { x: 51.41, y: 16.9 }, "gangareal_13", "stue_076"],
+  ["dør_053", { x: 34.91, y: 25.62 }, "gangareal_11", "gangareal_10"],
+  ["dør_054", { x: 46.49, y: 26.49 }, "gangareal_11", "gangareal_14"],
+  ["dør_055", { x: 50, y: 30 }, "stue_038", "gangareal_14"],
+  ["dør_056", { x: 52.75, y: 28.29 }, "stue_075", "gangareal_14"],
+  ["dør_057", { x: 54.28, y: 26.03 }, "stue_072", "gangareal_14"],
+  ["dør_058", { x: 51.02, y: 24.06 }, "gangareal_14", "gangareal_15"],
+  ["dør_059", { x: 59.7, y: 18 }, "gangareal_15", "gangareal_13"],
+  ["dør_060", { x: 53, y: 21.03 }, "stue_073", "gangareal_15"],
+  ["dør_061", { x: 48.51, y: 21.83 }, "stue_079", "gangareal_16"],
+  ["dør_062", { x: 43.69, y: 20.98 }, "gangareal_12", "gangareal_16"],
+  ["dør_063", { x: 50, y: 21 }, "gangareal_15", "gangareal_16"],
 ];
+  
 
 // Lav node-id til ALLE lokaler/gangarealer/aula/kantine
 const nodeNavnTilId = Object.fromEntries(
   lokaler.map((lokale, index) => [lokale.id, index + 1])
 );
+
 
 // Brug samme id'er til lokaleArray
 const lokaleArray = lokaler.map((lokale, index) => [
@@ -205,6 +235,11 @@ function findVej() {
   const startVerdi = document.getElementById("start").value.trim();// afæser værdi fra start inputfeltet i index.html filen
   const slutVerdi = document.getElementById("slut").value.trim();// afæser værdi fra slut inputfeltet i index.html filen
 
+  // Først tjek for tomme inputstrenge, da Number("") giver 0, ikke NaN
+  if (startVerdi === "" || slutVerdi === "") {
+    console.warn("Indtast gyldige start- og slutnumre, f.eks. 1 eller 79");
+    return;
+  }
   const startNr = Number(startVerdi);// Konvertere til tal typen så nummeret kan bruges til finde navnet til lokalets placering i det øverste array
   const slutNr = Number(slutVerdi);// Konvertere til tal typen så nummeret kan bruges til finde navnet til lokalets placering i det øverste array
 
@@ -246,7 +281,7 @@ if (startLokaleId == null || slutLokaleId == null) {
 
   const outputElement = document.getElementById("vejResultat");
   if (outputElement) {
-    outputElement.textContent = resultat;
+    outputElement.innerHTML = resultat.replace(/\n/g, "<br>");
   }
 }
 
