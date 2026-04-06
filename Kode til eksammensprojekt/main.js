@@ -281,9 +281,129 @@ if (startLokaleId == null || slutLokaleId == null) {
 
   const outputElement = document.getElementById("vejResultat");
   if (outputElement) {
-    outputElement.innerHTML = resultat.replace(/\n/g, "<br>");
+    outputElement.innerHTML = resultat.message.replace(/\n/g, "<br>");
+  }
+
+  if (resultat.route && resultat.route.length > 0) {
+    drawRouteOnMap(resultat.route);
+  } else {
+    clearRouteCanvas();
   }
 }
+
+const MAP_COORD_MIN_X = -70;
+const MAP_COORD_MAX_X = 70;
+const MAP_COORD_MIN_Y = 0;
+const MAP_COORD_MAX_Y = 60;
+
+function getRouteCanvas() {
+  return document.getElementById("routeCanvas");
+}
+
+function ensureCanvasSize() {
+  const img = document.querySelector(".map-image");
+  const canvas = getRouteCanvas();
+  if (!img || !canvas) {
+    return;
+  }
+
+  const width = img.clientWidth;
+  const height = img.clientHeight;
+  if (!width || !height) {
+    return;
+  }
+
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+  }
+}
+
+function clearRouteCanvas() {
+  const canvas = getRouteCanvas();
+  if (!canvas) {
+    return;
+  }
+
+  ensureCanvasSize();
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+function mapCoordinatesToPixels([x, y]) {
+  const img = document.querySelector(".map-image");
+  if (!img) {
+    return [0, 0];
+  }
+
+  const width = img.clientWidth;
+  const height = img.clientHeight;
+  const normalizedX = Math.min(Math.max((x - MAP_COORD_MIN_X) / (MAP_COORD_MAX_X - MAP_COORD_MIN_X), 0), 1);
+  const normalizedY = Math.min(Math.max((MAP_COORD_MAX_Y - y) / (MAP_COORD_MAX_Y - MAP_COORD_MIN_Y), 0), 1);
+
+  return [normalizedX * width, normalizedY * height];
+}
+
+function drawRouteOnMap(route) {
+  const canvas = getRouteCanvas();
+  const img = document.querySelector(".map-image");
+  if (!canvas || !img || !route || route.length === 0) {
+    clearRouteCanvas();
+    return;
+  }
+
+  ensureCanvasSize();
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    return;
+  }
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+
+  ctx.strokeStyle = "#e63946";
+  ctx.lineWidth = 5;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ctx.shadowColor = "rgba(0, 0, 0, 0.25)";
+  ctx.shadowBlur = 6;
+
+  ctx.beginPath();
+  const [startX, startY] = mapCoordinatesToPixels(route[0]);
+  ctx.moveTo(startX, startY);
+
+  for (let i = 1; i < route.length; i += 1) {
+    const [x, y] = mapCoordinatesToPixels(route[i]);
+    ctx.lineTo(x, y);
+  }
+
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#f1faee";
+  ctx.strokeStyle = "#e63946";
+  ctx.lineWidth = 2;
+
+  for (const point of route) {
+    const [x, y] = mapCoordinatesToPixels(point);
+    ctx.beginPath();
+    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+const mapImage = document.querySelector(".map-image");
+if (mapImage) {
+  mapImage.addEventListener("load", ensureCanvasSize);
+  ensureCanvasSize();
+}
+
+window.addEventListener("resize", ensureCanvasSize);
 
 // Gør funktionen tilgængelig globalt for onclick i index.html
 window.findVej = findVej;

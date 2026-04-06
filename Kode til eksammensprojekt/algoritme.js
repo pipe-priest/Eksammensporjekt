@@ -150,15 +150,29 @@ export default function dijkstraAlgoritmeSammeEtage(lokaleArray, dørArray, star
         return instruktioner.join(". ") + ".";
     }
 
+    function genererRute(sti, døre) {
+        const rute = [];
+        for (let i = 0; i < døre.length; i++) {
+            const dør = findDør(døre[i]);
+            if (dør) {
+                rute.push(dør[1]);
+            }
+        }
+        return rute;
+    }
+
     if (startLokaleId == null || målLokaleId == null) {
-        return "Fejl: start eller mål lokation er ikke angivet";
+        return { message: "Fejl: start eller mål lokation er ikke angivet", route: [] };
     }
 
     const vejResultat = findVejGennemLokaler(startLokaleId, målLokaleId);
 
     if (!vejResultat) {
-        return "Fejl: Ingen vej fundet mellem lokalerne";
+        return { message: "Fejl: Ingen vej fundet mellem lokalerne", route: [] };
     }
 
-    return genererInstruktioner(vejResultat.sti, vejResultat.døre);
+    return {
+        message: genererInstruktioner(vejResultat.sti, vejResultat.døre),
+        route: genererRute(vejResultat.sti, vejResultat.døre)
+    };
 }
