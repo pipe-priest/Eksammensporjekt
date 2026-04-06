@@ -276,7 +276,7 @@ if (startLokaleId == null || slutLokaleId == null) {
   return;
 }
 
-  const resultat = dijkstraAlgoritmeSammeEtage(lokaleArray, dørArray, startLokaleId, slutLokaleId); // kørre dijkstra algoritmen
+  const resultat = dijkstraAlgoritmeSammeEtage(lokaleArray, dørArray, startLokaleId, slutLokaleId); // opretter variablen resultat og kørre dijkstra algoritmen
   console.log("Resultat:", resultat); // printer dijkstra algoritmens resultat
 
   const outputElement = document.getElementById("vejResultat");
