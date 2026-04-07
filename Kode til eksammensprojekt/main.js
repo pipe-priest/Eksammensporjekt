@@ -238,6 +238,7 @@ function findVej() {
   // Først tjek for tomme inputstrenge, da Number("") giver 0, ikke NaN
   if (startVerdi === "" || slutVerdi === "") {
     console.warn("Indtast gyldige start- og slutnumre, f.eks. 1 eller 79");
+    clearRouteCanvas();
     return;
   }
   const startNr = Number(startVerdi);// Konvertere til tal typen så nummeret kan bruges til finde navnet til lokalets placering i det øverste array
@@ -246,6 +247,7 @@ function findVej() {
   // validering: sikre at tallene er gyldige og ikke tomme strenge, hvis ikke alt er i orden sendes en fejlmeddelelse i konsollen
   if (Number.isNaN(startNr) || Number.isNaN(slutNr) || startVerdi === "" || slutVerdi === "") {
     console.warn("Indtast gyldige start- og slutnumre, f.eks. 1 eller 10");
+    clearRouteCanvas();
     return;
   }
 
@@ -259,6 +261,7 @@ function findVej() {
 // sender fejmeddelelse, hvis koordinaterne ikke findes
   if (!startLokale || !slutLokale) { 
     console.warn("Kan ikke finde koordinater for start eller slut lokale."); 
+    clearRouteCanvas();
     return;
   }
 
@@ -273,16 +276,24 @@ const slutLokaleId = brugerLokaleTilNodeId[slutNr];
   // Kontrollere at numrene findes
 if (startLokaleId == null || slutLokaleId == null) {
   console.warn("Start- eller slutlokale kunne ikke oversættes til graf-id.");
+  clearRouteCanvas();
   return;
 }
 
-  const resultat = dijkstraAlgoritmeSammeEtage(lokaleArray, dørArray, startLokaleId, slutLokaleId); // opretter variablen resultat og kørre dijkstra algoritmen
+  let resultat;
+  try {
+    resultat = dijkstraAlgoritmeSammeEtage(lokaleArray, dørArray, startLokaleId, slutLokaleId); // opretter variablen resultat og kørre dijkstra algoritmen
+  } catch (error) {
+    console.error("Fejl under beregning af rute:", error);
+    clearRouteCanvas();
+    return;
+  }
   console.log("Resultat:", resultat); // printer dijkstra algoritmens resultat
 
-  const outputElement = document.getElementById("vejResultat");
-  if (outputElement) {
-    outputElement.innerHTML = resultat.message.replace(/\n/g, "<br>");
-  }
+const outputElement = document.getElementById("vejResultat");
+if (outputElement) {
+  outputElement.textContent = "Indtast gyldige start- og slutnumre.";
+}
 
   if (resultat.route && resultat.route.length > 0) {
     drawRouteOnMap(resultat.route);
